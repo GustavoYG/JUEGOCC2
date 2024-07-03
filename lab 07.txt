@@ -1,0 +1,210 @@
+//2
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class Fracciones {
+private:
+    int numerador;
+    int denominador;
+
+public:
+    
+    Fracciones(int _numerador , int _denominador){
+        numerador= _numerador;
+        denominador=_denominador;
+    }
+
+    // Sobrecarga de operadores
+    Fracciones operator+(const Fracciones& otra) const {
+        int num = numerador * otra.denominador + otra.numerador * denominador;
+        int denom = denominador * otra.denominador;
+        return Fracciones(num, denom);
+    }
+
+    Fracciones operator-(const Fracciones& otra) const {
+        int num = numerador * otra.denominador - otra.numerador * denominador;
+        int denom = denominador * otra.denominador;
+        return Fracciones(num, denom);
+    }
+
+    Fracciones operator*(const Fracciones& otra) const {
+        int num = numerador * otra.numerador;
+        int denom = denominador * otra.denominador;
+        return Fracciones(num, denom);
+    }
+
+    Fracciones operator/(const Fracciones& otra) const {
+        int num = numerador * otra.denominador;
+        int denom = denominador * otra.numerador;
+        return Fracciones(num, denom);
+    }
+
+    
+    void imprimir() const {
+        cout << numerador << "/" << denominador <<endl;
+    }
+};
+
+
+int convertirnumero(char c) {
+    return c - 48;
+}
+
+
+// 588/5 + 6/6
+
+int evaluarExpresion(const char* expresion, vector<int>& nume, vector<char>& operac) {
+    vector<int> valores; // Vector para los valores
+    vector<char> oper;   // Vector para los operadores
+
+    for (int i = 0; expresion[i] != '\0'; i++) {
+        // Si el carácter es un espacio, lo ignoramos
+        if (expresion[i] == ' ') continue;
+
+        // Si el carácter es un numero
+        if (expresion[i] >= '0' && expresion[i] <= '9') {
+            int value = 0;
+            while (expresion[i] >= '0' && expresion[i] <= '9') {
+                value = (value * 10) + convertirnumero(expresion[i]);
+                i++;
+            }
+            valores.push_back(value);
+            i--;
+        } else if (operador(expresion[i])) {
+            // Mientras el operador en el tope del vector tenga mayor o igual precedencia
+            while (!oper.empty() && importancia(oper.back()) >= importancia(expresion[i])) {
+                int val2 = valores.back(); 
+				valores.pop_back();
+                int val1 = valores.back(); 
+				valores.pop_back();
+                char op = oper.back(); 
+				oper.pop_back(); 
+				valores.push_back(operaciones(val1, val2, op));
+            }
+            oper.push_back(expresion[i]);
+        }
+    }
+
+    // Procesar los operadores restantes
+    while (!oper.empty()) {
+        int val2 = valores.back(); 
+		valores.pop_back();
+        int val1 = valores.back(); 
+		valores.pop_back();
+        char op = oper.back(); 
+		oper.pop_back(); 
+		valores.push_back(operaciones(val1, val2, op));
+    }
+
+    return valores.back();
+}
+
+void resultado (char oper){
+    
+    vector<int> valores; // Vector para los valores
+    vector<char> oper;   // Vector para los operadores
+    
+    int a , b , c , d;
+    
+    a=evaluarExpresion(oper)
+    b=evaluarExpresion(oper)
+    c=evaluarExpresion(oper)
+    d=evaluarExpresion(oper)
+    
+    Fracciones f1(, 2);
+    Fracciones f2(1, 3);
+    
+    Fracciones suma = f1 + f2;
+    Fracciones resta = f1 - f2;
+    Fracciones multiplicacion = f1 * f2;
+    Fracciones division = f1 / f2;
+    
+    cout << "Suma: ";
+    suma.imprimir();
+
+    cout << "Resta: ";
+    resta.imprimir();
+
+    cout << "Multiplicacion: ";
+    multiplicacion.imprimir();
+
+    cout << "Division: ";
+    division.imprimir()
+}
+
+
+int main() {
+    //operacion con fracciones
+    char calcular[100];
+    cout << "Operacion: ";
+    
+    cin.getline(calcular, 100);
+    
+    resultado(calcular);
+
+    return 0;
+}
+
+
+
+
+// 3
+
+#include <iostream>
+#include <vector>
+
+class MyList {
+private:
+    std::vector<int> values;
+    size_t currentIndex;
+
+public:
+    MyList() : currentIndex(0) {}
+
+    void add(int value) {
+        values.push_back(value);
+    }
+
+    // Sobrecarga del operador ++ (forma de prefijo)
+    MyList& operator++() {
+        if (currentIndex < values.size()) {
+            std::cout << values[currentIndex] << " ";
+            ++currentIndex;
+        }
+        return *this;
+    }
+
+    // Método para resetear el índice
+    void reset() {
+        currentIndex = 0;
+    }
+
+    // Método para verificar si hemos alcanzado el final del vector
+    bool end() const {
+        return currentIndex >= values.size();
+    }
+};
+
+int main() {
+    MyList myList;
+    myList.add(10);
+    myList.add(20);
+    myList.add(30);
+    myList.add(1);
+    myList.add(2);
+    myList.add(3);
+    myList.add(45);
+    myList.add(6);
+    myList.add(7);
+    myList.add(8);
+    myList.add(9);
+
+    // Usar el operador ++ para imprimir elementos uno a uno
+    while (!myList.end()) {
+        ++myList;
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
