@@ -1,10 +1,14 @@
 #include "Tank.h"
 #include <cmath>
 
-// No necesitas definir TILE_SIZE nuevamente aquÌ, ya est· definido en Tank.h
+// No necesitas definir TILE_SIZE nuevamente aqu√≠, ya est√° definido en Tank.h
 
 sf::Vector2f Tank::getPosition() const {
     return shape.getPosition();
+}
+
+void Tank::setPosition(float x, float y) {
+    shape.setPosition(x, y);
 }
 
 Tank::Tank(sf::Vector2f position, const sf::Texture& texture) : speed(100.0f) {
@@ -26,6 +30,27 @@ void Tank::moveForward(float deltaTime, const sf::Vector2u& windowSize, const in
 
 void Tank::moveBackward(float deltaTime, const sf::Vector2u& windowSize, const int map[MAP_HEIGHT][MAP_WIDTH]) {
     float angle = shape.getRotation() * 3.14159265f / 180.0f;
+    sf::Vector2f direction(std::cos(angle), std::sin(angle));
+    sf::Vector2f newPosition = shape.getPosition() - direction * speed * deltaTime;
+
+    if (isWithinWindow(newPosition, windowSize) && !checkCollisionWithWalls(newPosition, map)) {
+        shape.setPosition(newPosition);
+    }
+}
+
+void Tank::moveRight(float deltaTime, const sf::Vector2u& windowSize, const int map[MAP_HEIGHT][MAP_WIDTH]) {
+    float angle = (shape.getRotation() + 90) * 3.14159265f / 180.0f;  
+    sf::Vector2f direction(std::cos(angle), std::sin(angle));
+    sf::Vector2f newPosition = shape.getPosition() + direction * speed * deltaTime;
+
+    if (isWithinWindow(newPosition, windowSize) && !checkCollisionWithWalls(newPosition, map)) {
+        shape.setPosition(newPosition);
+    }
+}
+
+
+void Tank::moveLeft(float deltaTime, const sf::Vector2u& windowSize, const int map[MAP_HEIGHT][MAP_WIDTH]) {
+    float angle = (shape.getRotation()+90) * 3.14159265f / 180.0f;
     sf::Vector2f direction(std::cos(angle), std::sin(angle));
     sf::Vector2f newPosition = shape.getPosition() - direction * speed * deltaTime;
 
@@ -69,5 +94,10 @@ bool Tank::checkCollisionWithWalls(const sf::Vector2f& newPosition, const int ma
         }
     }
     return false;
+}
+
+std::unique_ptr<Mine> Tank::placeMine(const sf::Texture& mineTexture) {
+    sf::Vector2f position = shape.getPosition();
+    return std::make_unique<Mine>(position, mineTexture);
 }
 
